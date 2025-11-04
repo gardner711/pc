@@ -40,11 +40,11 @@ describe('Character Delete Integration Tests', () => {
 
         // Confirmation dialog should appear
         await waitFor(() => {
-            expect(screen.getByText(/confirm.*delete/i)).toBeInTheDocument()
+            expect(screen.getByText(/are you sure.*delete/i)).toBeInTheDocument()
         })
 
         // Confirm deletion
-        const confirmButton = screen.getByRole('button', { name: /confirm|yes|delete/i })
+        const confirmButton = screen.getByRole('button', { name: /delete character/i })
         await user.click(confirmButton)
 
         // Character should be removed from list
@@ -71,17 +71,21 @@ describe('Character Delete Integration Tests', () => {
         await user.click(deleteButton)
 
         await waitFor(() => {
-            expect(screen.getByText(/confirm.*delete/i)).toBeInTheDocument()
+            expect(screen.getByText(/are you sure.*delete/i)).toBeInTheDocument()
         })
 
         // Click cancel instead of confirm
-        const cancelButton = screen.getByRole('button', { name: /cancel|no/i })
+        const cancelButton = screen.getByRole('button', { name: /cancel/i })
         await user.click(cancelButton)
 
-        // Character should still be in the list
+        // Delete confirmation should be hidden, modal should still be open
         await waitFor(() => {
-            expect(screen.getByText('Gandalf the Grey')).toBeInTheDocument()
+            expect(screen.queryByText(/are you sure.*delete/i)).not.toBeInTheDocument()
         })
+
+        // Character should still be in the list and modal should be open
+        expect(screen.getByRole('dialog')).toBeInTheDocument()
+        expect(screen.getAllByText('Gandalf the Grey').length).toBeGreaterThan(0)
     })
 
     it('should handle deletion of multiple characters sequentially', async () => {
@@ -137,8 +141,8 @@ describe('Character Delete Integration Tests', () => {
         await user.click(screen.getByText('Character to Delete 1'))
         await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument())
         await user.click(screen.getByRole('button', { name: /delete/i }))
-        await waitFor(() => expect(screen.getByText(/confirm.*delete/i)).toBeInTheDocument())
-        await user.click(screen.getAllByRole('button', { name: /confirm|yes|delete/i })[0])
+        await waitFor(() => expect(screen.getByText(/are you sure.*delete/i)).toBeInTheDocument())
+        await user.click(screen.getByRole('button', { name: /delete character/i }))
 
         await waitFor(() => {
             expect(screen.queryByText('Character to Delete 1')).not.toBeInTheDocument()
@@ -148,8 +152,8 @@ describe('Character Delete Integration Tests', () => {
         await user.click(screen.getByText('Character to Delete 2'))
         await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument())
         await user.click(screen.getByRole('button', { name: /delete/i }))
-        await waitFor(() => expect(screen.getByText(/confirm.*delete/i)).toBeInTheDocument())
-        await user.click(screen.getAllByRole('button', { name: /confirm|yes|delete/i })[0])
+        await waitFor(() => expect(screen.getByText(/are you sure.*delete/i)).toBeInTheDocument())
+        await user.click(screen.getByRole('button', { name: /delete character/i }))
 
         await waitFor(() => {
             expect(screen.queryByText('Character to Delete 2')).not.toBeInTheDocument()
@@ -191,8 +195,8 @@ describe('Character Delete Integration Tests', () => {
         await user.click(screen.getByText('Temporary Character'))
         await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument())
         await user.click(screen.getByRole('button', { name: /delete/i }))
-        await waitFor(() => expect(screen.getByText(/confirm.*delete/i)).toBeInTheDocument())
-        await user.click(screen.getAllByRole('button', { name: /confirm|yes|delete/i })[0])
+        await waitFor(() => expect(screen.getByText(/are you sure.*delete/i)).toBeInTheDocument())
+        await user.click(screen.getByRole('button', { name: /delete character/i }))
 
         // List should be refreshed - only Gandalf remains
         await waitFor(() => {
@@ -235,10 +239,10 @@ describe('Character Delete Integration Tests', () => {
         await user.click(deleteButton)
 
         await waitFor(() => {
-            expect(screen.getByText(/confirm.*delete/i)).toBeInTheDocument()
+            expect(screen.getByText(/are you sure.*delete/i)).toBeInTheDocument()
         })
 
-        await user.click(screen.getAllByRole('button', { name: /confirm|yes|delete/i })[0])
+        await user.click(screen.getByRole('button', { name: /delete character/i }))
 
         // Both the confirmation and preview modal should close
         await waitFor(() => {
@@ -258,8 +262,8 @@ describe('Character Delete Integration Tests', () => {
         await user.click(screen.getByText('Gandalf the Grey'))
         await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument())
         await user.click(screen.getByRole('button', { name: /delete/i }))
-        await waitFor(() => expect(screen.getByText(/confirm.*delete/i)).toBeInTheDocument())
-        await user.click(screen.getAllByRole('button', { name: /confirm|yes|delete/i })[0])
+        await waitFor(() => expect(screen.getByText(/are you sure.*delete/i)).toBeInTheDocument())
+        await user.click(screen.getByRole('button', { name: /delete character/i }))
 
         // Should show empty state message
         await waitFor(() => {

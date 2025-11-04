@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Character } from '../../types/character'
 import { calculateAbilityModifier } from '../../utils/calculations'
@@ -16,6 +16,12 @@ export default function CharacterPreview({ character, onClose, onDelete }: Chara
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [deleting, setDeleting] = useState(false)
 
+    // Reset delete confirmation state when character changes
+    useEffect(() => {
+        setShowDeleteConfirm(false)
+        setDeleting(false)
+    }, [character?._id])
+
     if (!character) return null
 
     const formatModifier = (score: number) => {
@@ -29,6 +35,9 @@ export default function CharacterPreview({ character, onClose, onDelete }: Chara
             onClick={onClose}
         >
             <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="character-preview-title"
                 className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-lg bg-white shadow-xl dark:bg-gray-800"
                 onClick={(e) => e.stopPropagation()}
             >
@@ -36,7 +45,7 @@ export default function CharacterPreview({ character, onClose, onDelete }: Chara
                 <div className="sticky top-0 border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            <h2 id="character-preview-title" className="text-2xl font-bold text-gray-900 dark:text-white">
                                 {character.characterName}
                             </h2>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
