@@ -13,7 +13,7 @@ export interface CharacterFormData {
     abilityScores: AbilityScores
 }
 
-export const validateCharacterForm = (data: Partial<CharacterFormData>): Record<string, string> => {
+export const validateBasicInfo = (data: Partial<CharacterFormData>): Record<string, string> => {
     const errors: Record<string, string> = {}
 
     // Required fields
@@ -41,7 +41,25 @@ export const validateCharacterForm = (data: Partial<CharacterFormData>): Record<
         errors.level = 'Level must be between 1 and 20'
     }
 
-    // Ability scores
+    // Optional field length limits
+    if (data.playerName && data.playerName.length > 500) {
+        errors.playerName = 'Player name must be 500 characters or less'
+    }
+
+    if (data.background && data.background.length > 500) {
+        errors.background = 'Background must be 500 characters or less'
+    }
+
+    if (data.alignment && data.alignment.length > 500) {
+        errors.alignment = 'Alignment must be 500 characters or less'
+    }
+
+    return errors
+}
+
+export const validateAbilityScores = (data: Partial<CharacterFormData>): Record<string, string> => {
+    const errors: Record<string, string> = {}
+
     if (data.abilityScores) {
         const abilities = [
             { key: 'strength', label: 'Strength' },
@@ -62,20 +80,14 @@ export const validateCharacterForm = (data: Partial<CharacterFormData>): Record<
         })
     }
 
-    // Optional field length limits
-    if (data.playerName && data.playerName.length > 500) {
-        errors.playerName = 'Player name must be 500 characters or less'
-    }
-
-    if (data.background && data.background.length > 500) {
-        errors.background = 'Background must be 500 characters or less'
-    }
-
-    if (data.alignment && data.alignment.length > 500) {
-        errors.alignment = 'Alignment must be 500 characters or less'
-    }
-
     return errors
+}
+
+export const validateCharacterForm = (data: Partial<CharacterFormData>): Record<string, string> => {
+    return {
+        ...validateBasicInfo(data),
+        ...validateAbilityScores(data),
+    }
 }
 
 export const getDefaultAbilityScores = (): AbilityScores => ({

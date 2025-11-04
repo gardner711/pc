@@ -83,7 +83,7 @@ const handleGetCharacters = ({ request }: any) => {
         characters = characters.filter(c => c.race === raceFilter)
     }
 
-    return HttpResponse.json(characters)
+    return HttpResponse.json({ data: characters })
 }
 
 const handleGetCharacterById = ({ params }: any) => {
@@ -94,7 +94,7 @@ const handleGetCharacterById = ({ params }: any) => {
         return HttpResponse.json({ error: 'Character not found' }, { status: 404 })
     }
 
-    return HttpResponse.json(character)
+    return HttpResponse.json({ data: character })
 }
 
 const handleCreateCharacter = async ({ request }: any) => {
@@ -125,7 +125,7 @@ const handleCreateCharacter = async ({ request }: any) => {
     })
 
     mockCharacters.push(newCharacter)
-    return HttpResponse.json(newCharacter, { status: 201 })
+    return HttpResponse.json({ data: newCharacter }, { status: 201 })
 }
 
 const handleUpdateCharacter = async ({ params, request }: any) => {
@@ -163,7 +163,7 @@ const handleUpdateCharacter = async ({ params, request }: any) => {
     })
 
     mockCharacters[index] = updated
-    return HttpResponse.json(updated)
+    return HttpResponse.json({ data: updated })
 }
 
 const handleDeleteCharacter = ({ params }: any) => {

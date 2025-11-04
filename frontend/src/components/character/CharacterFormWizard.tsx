@@ -4,6 +4,8 @@ import { Character } from '../../types/character'
 import {
     CharacterFormData,
     validateCharacterForm,
+    validateBasicInfo,
+    validateAbilityScores,
     getDefaultFormData,
 } from '../../validation/characterValidation'
 import { characterService } from '../../services/characterService'
@@ -62,7 +64,17 @@ export default function CharacterFormWizard({ initialData, mode }: CharacterForm
     }
 
     const validateCurrentStep = (): boolean => {
-        const validationErrors = validateCharacterForm(formData)
+        let validationErrors: Record<string, string> = {}
+
+        // Validate only the fields relevant to the current step
+        if (currentStep === 0) {
+            // Basic Info step
+            validationErrors = validateBasicInfo(formData)
+        } else if (currentStep === 1) {
+            // Ability Scores step
+            validationErrors = validateAbilityScores(formData)
+        }
+
         setErrors(validationErrors)
         return Object.keys(validationErrors).length === 0
     }
@@ -78,7 +90,11 @@ export default function CharacterFormWizard({ initialData, mode }: CharacterForm
     }
 
     const handleSubmit = async () => {
-        if (!validateCurrentStep()) {
+        // Validate the entire form before submission
+        const allErrors = validateCharacterForm(formData)
+        setErrors(allErrors)
+
+        if (Object.keys(allErrors).length > 0) {
             return
         }
 
@@ -152,8 +168,8 @@ export default function CharacterFormWizard({ initialData, mode }: CharacterForm
                             <div className="flex flex-col items-center">
                                 <div
                                     className={`flex h-10 w-10 items-center justify-center rounded-full border-2 ${index <= currentStep
-                                            ? 'border-indigo-600 bg-indigo-600 text-white'
-                                            : 'border-gray-300 bg-white text-gray-500 dark:border-gray-600 dark:bg-gray-800'
+                                        ? 'border-indigo-600 bg-indigo-600 text-white'
+                                        : 'border-gray-300 bg-white text-gray-500 dark:border-gray-600 dark:bg-gray-800'
                                         }`}
                                 >
                                     {index < currentStep ? '✓' : index + 1}

@@ -443,12 +443,14 @@ describe('Backend Validation Integration Tests', () => {
                 body: JSON.stringify(characterData),
             })
             expect(createResponse.status).toBe(201)
-            const created = await createResponse.json()
+            const createResult = await createResponse.json()
+            const created = createResult.data
 
             // Retrieve character
-            const getResponse = await fetch(`/api/characters/${created.id}`)
+            const getResponse = await fetch(`/api/characters/${created._id}`)
             expect(getResponse.status).toBe(200)
-            const retrieved = await getResponse.json()
+            const getResult = await getResponse.json()
+            const retrieved = getResult.data
 
             expect(retrieved.characterName).toBe(characterData.characterName)
             expect(retrieved.race).toBe(characterData.race)
