@@ -480,7 +480,8 @@ describe('Backend Validation Integration Tests', () => {
             })
 
             expect(response.status).toBe(201)
-            const character = await response.json()
+            const result = await response.json()
+            const character = result.data
 
             expect(character.abilityScores.strength.score).toBe(8)
             expect(character.abilityScores.dexterity.score).toBe(12)
